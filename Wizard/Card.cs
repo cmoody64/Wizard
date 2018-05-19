@@ -13,7 +13,7 @@ namespace Wizard
         THREE,
         FOUR,
         FIVE,
-        SIZE,
+        SIX,
         SEVEN,
         EIGHT,
         NINE,
