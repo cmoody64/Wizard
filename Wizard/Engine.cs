@@ -60,7 +60,14 @@ namespace Wizard
             }
 
             // resolve round scores
-
+            _players.ForEach(player =>
+            {
+                int diff = Math.Abs(curRoundBids[player] - curRoundResults[player]);
+                if (diff == 0)
+                    _playerScores[player] += (BASELINE_SCORE + curRoundBids[player] * HIT_SCORE);
+                else
+                    _playerScores[player] += (diff * MISS_SCORE);
+            });
         }
 
         // executes a single trick and returns the player that won the trick
@@ -85,6 +92,10 @@ namespace Wizard
         private List<Player> _players;
         private Deck _deck;
         private Dictionary<Player, int> _playerScores;
-        public IWizardFrontend Frontend { get; }        
+        public IWizardFrontend Frontend { get; }
+
+        private readonly int BASELINE_SCORE = 20;
+        private readonly int HIT_SCORE = 10;
+        private readonly int MISS_SCORE = -10;
     }
 }
