@@ -10,6 +10,8 @@ namespace Wizard
     {
         static void Main(string[] args)
         {
+            var gameLoop = new GameLoop();
+            gameLoop.Run();
         }
     }
 }

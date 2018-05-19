@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Wizard
 {
-    enum CardValue
+    public enum CardValue
     {
         JESTER = 1,
         TWO,
@@ -25,7 +25,7 @@ namespace Wizard
         WIZARD
     }
 
-    enum CardSuite
+    public enum CardSuite
     {
         SPADES,
         CLUBS,
@@ -34,7 +34,7 @@ namespace Wizard
         SPECIAL
     }
 
-    class Card
+    public class Card
     {
         public Card(CardValue value, CardSuite suite)
         {

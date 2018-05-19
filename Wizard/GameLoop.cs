@@ -11,6 +11,7 @@ namespace Wizard
         public GameLoop()
         {
             _players = new List<IPlayer>();
+            _players.Add(new HumanPlayer());
             _deck = new Deck();            
         }
 
@@ -31,6 +32,7 @@ namespace Wizard
                 DealDeck(round);
 
                 // gameplay
+                var x = 2;
             }
         }
 
