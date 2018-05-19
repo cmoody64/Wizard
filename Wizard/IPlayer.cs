@@ -10,5 +10,7 @@ namespace Wizard
     {
         void TakeCard(Card card);
         Card PlayCard();
+        IReadOnlyList<Card> Hand { get; }
+        string Name { get; }
     }
 }

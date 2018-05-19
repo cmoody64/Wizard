@@ -10,8 +10,8 @@ namespace Wizard
     {
         static void Main(string[] args)
         {
-            var gameLoop = new GameLoop();
-            gameLoop.Run();
+            var wizardEngine = new Engine();
+            wizardEngine.Run();
         }
     }
 }

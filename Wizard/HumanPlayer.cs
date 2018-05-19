@@ -8,7 +8,7 @@ namespace Wizard
 {
     public class HumanPlayer : IPlayer
     {
-        public HumanPlayer()
+        public HumanPlayer(string Name)
         {
             _hand = new List<Card>();
         }
@@ -27,5 +27,13 @@ namespace Wizard
         }
 
         private List<Card> _hand;
+
+        public IReadOnlyList<Card> Hand { get { return _hand; } }
+        public string Name { get; }
+
+        public override int GetHashCode()
+        {
+            return 17 * Name.GetHashCode();
+        }
     }
 }
