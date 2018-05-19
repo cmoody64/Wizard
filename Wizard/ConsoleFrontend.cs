@@ -23,7 +23,7 @@ namespace Wizard
             Console.WriteLine($"Starting Trick {trickNum}\n");
         }
 
-        public int PromptPlayerBid(IPlayer player)
+        public int PromptPlayerBid(Player player)
         {
             Console.Write("enter bid: ");
             int bid = -1;
@@ -43,7 +43,7 @@ namespace Wizard
             return bid;
         }
 
-        public Card PromptPlayerCardSelection(IPlayer player)
+        public Card PromptPlayerCardSelection(Player player)
         {
             Console.WriteLine($"Current Hand: ");
             foreach(var card in player.Hand)

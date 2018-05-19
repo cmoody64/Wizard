@@ -11,7 +11,7 @@ namespace Wizard
         void DisplayStartGame();
         void DisplayStartRound(int roundNum);
         void DisplayStartTrick(int trickNum);
-        Card PromptPlayerCardSelection(IPlayer player);
-        int PromptPlayerBid(IPlayer player);
+        Card PromptPlayerCardSelection(Player player);
+        int PromptPlayerBid(Player player);
     }
 }

@@ -142,6 +142,9 @@ ModelManifest.xml
 # Windows detritus
 # =========================
 
+# Visual Studio Temp
+.vs
+
 # Windows image file caches
 Thumbs.db
 ehthumbs.db

@@ -6,34 +6,22 @@ using System.Threading.Tasks;
 
 namespace Wizard
 {
-    public class HumanPlayer : IPlayer
+    public class HumanPlayer : Player
     {
-        public HumanPlayer(string Name)
-        {
-            _hand = new List<Card>();
+        public HumanPlayer(Engine engine, string Name): base(engine, Name)
+        {                
         }
 
-        public Card PlayCard()
+        public override int MakeBid()
         {
-            // TODO add meaningful functionality here
-            var cardToPlay = _hand[_hand.Count-1];
-            _hand.RemoveAt(_hand.Count - 1);
+            return _engine.Frontend.PromptPlayerBid(this);
+        }
+
+        public override Card MakeTurn()
+        {
+            var cardToPlay = _engine.Frontend.PromptPlayerCardSelection(this);
+            _hand.Remove(cardToPlay);
             return cardToPlay;
-        }
-
-        public void TakeCard(Card card)
-        {
-            _hand.Add(card);
-        }
-
-        private List<Card> _hand;
-
-        public IReadOnlyList<Card> Hand { get { return _hand; } }
-        public string Name { get; }
-
-        public override int GetHashCode()
-        {
-            return 17 * Name.GetHashCode();
         }
     }
 }
