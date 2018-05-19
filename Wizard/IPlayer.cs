@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Wizard
 {
-    interface IPlayer
+    public interface IPlayer
     {
         void TakeCard(Card card);
         Card PlayCard();

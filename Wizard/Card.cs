@@ -34,7 +34,7 @@ namespace Wizard
         SPECIAL
     }
 
-    public class Card
+    public class Card: IEquatable<Card>
     {
         public Card(CardValue value, CardSuite suite)
         {
@@ -44,5 +44,24 @@ namespace Wizard
 
         public CardValue Value { get; }
         public CardSuite Suite { get; }
+
+
+
+        public override int GetHashCode()
+        {
+            return 17 * Value.GetHashCode() + 23 * Suite.GetHashCode();
+        }
+
+        public bool Equals(Card other)
+        {
+            return other != null && other.Suite == Suite && other.Value == Value;
+        }
+
+        public override string ToString()
+        {
+            return Suite != CardSuite.SPECIAL
+                ? $"{Value.ToString()} of {Suite.ToString()}"
+                : Value.ToString();
+        }
     }
 }

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Wizard
 {
-    class HumanPlayer : IPlayer
+    public class HumanPlayer : IPlayer
     {
         public HumanPlayer()
         {

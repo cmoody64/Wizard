@@ -12,7 +12,7 @@ namespace Wizard
         public Deck()
         {
             _cards = new List<Card>();
-            var standardSuites = new List<CardSuite> { CardSuite.CLUBS, CardSuite.SPADES, CardSuite.HEARTS, CardSuite.DIAMONDS };
+            var standardSuites = new[] { CardSuite.CLUBS, CardSuite.SPADES, CardSuite.HEARTS, CardSuite.DIAMONDS };
 
             // add in TWO to ACE in each suite besides special
             foreach(var cardVal in Enumerable.Range((int)CardValue.TWO, (int)CardValue.ACE))
