@@ -34,6 +34,13 @@ namespace Wizard
         public IReadOnlyList<Card> Cards { get { return _cards; } }
         private List<Card> _cards;
 
+        public Card PopTop()
+        {
+            Card top = _cards[_cards.Count];
+            _cards.Remove(top);
+            return top;
+        }
+
         public void Shuffle()
         {
             var rand = new Random();
