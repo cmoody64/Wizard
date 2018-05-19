@@ -29,11 +29,26 @@ namespace Wizard
                 cards.Add(new Card(CardValue.JESTER, CardSuite.SPECIAL));
                 cards.Add(new Card(CardValue.WIZARD, CardSuite.SPECIAL));
             }
-
-            Cards = cards;
         }
 
-        public IReadOnlyList<Card> Cards { get; }
+        public IReadOnlyList<Card> Cards { get { return _cards; } }
+        private List<Card> _cards;
+
+        public void Shuffle()
+        {
+            var rand = new Random();
+            for(int i = 0; i < _cards.Count; i++)
+            {
+                SwapCards(i, rand.Next(i, _cards.Count));
+            }
+        }
+
+        private void SwapCards(int i, int j)
+        {
+            Card temp = _cards[i];
+            _cards[i] = _cards[j];
+            _cards[j] = temp;
+        }
 
         private readonly int NUM_SPECIAL_CARDS = 4;
     }
