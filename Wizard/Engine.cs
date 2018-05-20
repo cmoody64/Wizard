@@ -44,7 +44,7 @@ namespace Wizard
 
             _gameContext.Rounds.Add(new RoundContext(roundNum, trumpSuite));
             var curRound = _gameContext.CurRound;
-            curRound.Dealer = _gameContext.PrevRound == null
+            curRound.Dealer = roundNum == 1
                 ? _players[0]
                 : _players[(_players.IndexOf(_gameContext.PrevRound.Dealer) + 1) % _players.Count];
 
@@ -54,7 +54,8 @@ namespace Wizard
             // execute tricks and record results
             for (int trickNum = 1; trickNum <= roundNum; trickNum++)
             {
-                Player winner = PlaySingleTrick(trickNum);
+                PlaySingleTrick(trickNum);
+                Player winner = curRound.CurTrick.Winner;
                 curRound.Results[winner]++;
             }
 
@@ -69,8 +70,8 @@ namespace Wizard
             });
         }
 
-        // executes a single trick and returns the player that won the trick
-        private Player PlaySingleTrick(int trickNum)
+        // executes a single trick and stores state in a new TrickContext instance, as well
+        private void PlaySingleTrick(int trickNum)
         {
             _frontend.DisplayStartTrick(trickNum);
             _gameContext.CurRound.Tricks.Add(new TrickContext(trickNum));
@@ -78,9 +79,18 @@ namespace Wizard
             var curRound = _gameContext.CurRound;
             var curTrick = curRound.CurTrick;
 
+            Player leader = trickNum == 1
+                ? leader = curRound.Dealer
+                : leader = curRound.PrevTrick.Winner;
 
+            List<Player> trickPlayerOrder = null; // TODO elegant way to wrap around _player list in play oder starting w/ dealer
 
-            return null;
+            trickPlayerOrder.ForEach(player =>
+            {
+                curTrick.CardsPlayed.Add(player.MakeTurn(_gameContext));
+            });
+
+            // set winner
         }
 
         private void DealDeck(int roundNum)

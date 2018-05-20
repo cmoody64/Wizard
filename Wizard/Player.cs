@@ -15,7 +15,7 @@ namespace Wizard
             _frontend = frontend;
         }
         
-        public abstract Card MakeTurn();
+        public abstract Card MakeTurn(GameContext gameContext);
         public abstract int MakeBid();
 
         public void TakeCard(Card card)

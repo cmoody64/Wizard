@@ -17,7 +17,7 @@ namespace Wizard
             return _frontend.PromptPlayerBid(this);
         }
 
-        public override Card MakeTurn()
+        public override Card MakeTurn(GameContext gameContext)
         {
             var cardToPlay = _frontend.PromptPlayerCardSelection(this);
             _hand.Remove(cardToPlay);

@@ -42,8 +42,12 @@ namespace Wizard
         public Dictionary<Player, int> Bids { get; }
         public Dictionary<Player, int> Results { get; }
         public CardSuite TrumpSuite { get; }
-        public TrickContext CurTrick { get { return Tricks.Last(); } }
         public Player Dealer { get; set; }
+        public TrickContext CurTrick { get { return Tricks.Last(); } }
+        public TrickContext PrevTrick
+        {
+            get { return Tricks.Count > 1 ? Tricks[Tricks.Count - 2] : null; }
+        }
     }
 
     // state that persists across a single trick
@@ -56,6 +60,15 @@ namespace Wizard
         }
         public int TrickNum { get; }
         public List<Card> CardsPlayed { get; }
-        public CardSuite LeadingSuite { get; set; }
+        public CardSuite LeadingSuite
+        {
+            get
+            {
+                return CardsPlayed.Count > 0
+                    ? CardsPlayed[0].Suite
+                    : throw new IndexOutOfRangeException("LeadingSuite cannot be accessed because a leading card has not yet been played");
+            }
+        }
+        public Player Winner;
     }
 }
