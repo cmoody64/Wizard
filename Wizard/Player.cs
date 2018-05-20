@@ -8,11 +8,11 @@ namespace Wizard
 {
     public abstract class Player
     {
-        public Player(Engine engine, string name)
+        public Player(IWizardFrontend frontend, string name)
         {
             Name = name;
             _hand = new List<Card>();
-            _engine = engine;
+            _frontend = frontend;
         }
         
         public abstract Card MakeTurn();
@@ -28,7 +28,7 @@ namespace Wizard
             return 17 * Name.GetHashCode();
         }
 
-        protected Engine _engine;
+        protected IWizardFrontend _frontend;
         protected List<Card> _hand;
         public IReadOnlyList<Card> Hand { get { return _hand; } }
         public string Name { get; }

@@ -68,5 +68,21 @@ namespace Wizard
 
             return player.Hand[selection];
         }
+
+        public List<Player> PromptPlayerCreation()
+        {
+            Console.WriteLine("type player names - enter blank name when done");
+            List<Player> players = new List<Player>();
+            while(true)
+            {
+                string curName = Console.ReadLine();
+                if (curName.Length > 0)
+                    players.Add(new HumanPlayer(this, curName));
+                else
+                    break;
+            }
+
+            return players;
+        }
     }
 }

@@ -46,9 +46,10 @@
     <Compile Include="Card.cs" />
     <Compile Include="ConsoleFrontend.cs" />
     <Compile Include="Deck.cs" />
-    <Compile Include="GameLoop.cs" />
+    <Compile Include="Engine.cs" />
+    <Compile Include="GameContext.cs" />
     <Compile Include="HumanPlayer.cs" />
-    <Compile Include="IPlayer.cs" />
+    <Compile Include="Player.cs" />
     <Compile Include="IWizardFrontend.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

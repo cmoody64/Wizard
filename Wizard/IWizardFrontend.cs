@@ -13,5 +13,6 @@ namespace Wizard
         void DisplayStartTrick(int trickNum);
         Card PromptPlayerCardSelection(Player player);
         int PromptPlayerBid(Player player);
+        List<Player> PromptPlayerCreation();
     }
 }

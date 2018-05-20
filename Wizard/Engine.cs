@@ -11,11 +11,11 @@ namespace Wizard
         public Engine()
         {
             _players = new List<Player>();
-            _players.Add(new HumanPlayer(this, "Barack"));
-            _players.Add(new HumanPlayer(this, "Ronald"));
-            _players.Add(new HumanPlayer(this, "George"));
+            _players.Add(new HumanPlayer(this._frontend, "Barack"));
+            _players.Add(new HumanPlayer(this._frontend, "Ronald"));
+            _players.Add(new HumanPlayer(this._frontend, "George"));
             _deck = new Deck();
-            Frontend = new ConsoleFrontend();
+            _frontend = new ConsoleFrontend();
             _playerScores = new Dictionary<Player, int>();                      
         }
 
@@ -28,8 +28,13 @@ namespace Wizard
 
         private void PlaySingleGame()
         {
-            Frontend.DisplayStartGame();
-            ResetPlayerScores();
+            _frontend.DisplayStartGame();
+            List<Player> players = _frontend.PromptPlayerCreation();
+
+            _gameContext = new GameContext();
+            _gameContext.AddPlayers(players);
+
+            // ResetPlayerScores();
             var curRoundBids = new Dictionary<Player, int>();
             // setup deck and deal cards
             _deck.Shuffle();
@@ -45,10 +50,11 @@ namespace Wizard
 
         private void PlaySingleRound(int roundNum)
         {
-            Frontend.DisplayStartRound(roundNum);
+            _frontend.DisplayStartRound(roundNum);
             var curRoundBids = new Dictionary<Player, int>();
             var curRoundResults = new Dictionary<Player, int>();
-
+            CardSuite trumpSuite = _deck.Cards.Count > 0 ? _deck.PopTop().Suite : CardSuite.SPECIAL;
+            
             // bid on current round
             _players.ForEach(player => curRoundBids[player] = player.MakeBid());
 
@@ -71,9 +77,9 @@ namespace Wizard
         }
 
         // executes a single trick and returns the player that won the trick
-        private Player PlaySingleTrick(int trickNum)
+        private Player PlaySingleTrick(int trickNum, CardSuite trumpSuite)
         {
-            Frontend.DisplayStartTrick(trickNum);
+            _frontend.DisplayStartTrick(trickNum);
             return null;
         }
 
@@ -92,7 +98,8 @@ namespace Wizard
         private List<Player> _players;
         private Deck _deck;
         private Dictionary<Player, int> _playerScores;
-        public IWizardFrontend Frontend { get; }
+        private IWizardFrontend _frontend { get; }
+        private GameContext _gameContext;
 
         private readonly int BASELINE_SCORE = 20;
         private readonly int HIT_SCORE = 10;
