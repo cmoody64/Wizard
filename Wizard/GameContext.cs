@@ -8,32 +8,25 @@ namespace Wizard
 {
     public class GameContext
     {
-        public GameContext()
+        // state that persists across the scope of a single game
+        public GameContext(List<Player> players)
         {
             Rounds = new List<RoundContext>();
             PlayerScores = new Dictionary<Player, int>();
-            _players = new List<Player>();
-            Deck = new Deck();
+
+            // initialize player scores based off of the current player list passed in by the engine
+            players.ForEach(player => PlayerScores[player] = 0);
         }
         public List<RoundContext> Rounds { get; }
         public Dictionary<Player, int> PlayerScores { get; }
-        public IReadOnlyList<Player> Players { get { return _players; } }
-        public Deck Deck { get; }
         public RoundContext CurRound { get { return Rounds.Last(); } }
-        private List<Player> _players;
-
-        public void AddPlayer(Player player)
+        public RoundContext PrevRound
         {
-            _players.Add(player);
-            PlayerScores[player] = 0;
-        }
-
-        public void AddPlayers(List<Player> players)
-        {
-            players.ForEach(player => AddPlayer(player));
+            get { return Rounds.Count > 1 ? Rounds[Rounds.Count - 2] : null; }
         }
     }
 
+    // state that persists across a single round
     public class RoundContext
     {
         public RoundContext(int roundNum, CardSuite trumpSuite)
@@ -50,18 +43,19 @@ namespace Wizard
         public Dictionary<Player, int> Results { get; }
         public CardSuite TrumpSuite { get; }
         public TrickContext CurTrick { get { return Tricks.Last(); } }
+        public Player Dealer { get; set; }
     }
 
+    // state that persists across a single trick
     public class TrickContext
     {
-        public TrickContext(int trickNum, CardSuite leadingSuite)
+        public TrickContext(int trickNum)
         {
             TrickNum = trickNum;
-            LeadingSuite = leadingSuite;
             CardsPlayed = new List<Card>();
         }
         public int TrickNum { get; }
         public List<Card> CardsPlayed { get; }
-        public CardSuite LeadingSuite { get; }
+        public CardSuite LeadingSuite { get; set; }
     }
 }

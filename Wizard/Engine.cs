@@ -10,13 +10,8 @@ namespace Wizard
     {
         public Engine()
         {
-            _players = new List<Player>();
-            _players.Add(new HumanPlayer(this._frontend, "Barack"));
-            _players.Add(new HumanPlayer(this._frontend, "Ronald"));
-            _players.Add(new HumanPlayer(this._frontend, "George"));
-            _deck = new Deck();
             _frontend = new ConsoleFrontend();
-            _playerScores = new Dictionary<Player, int>();                      
+            _deck = new Deck();
         }
 
         // blocking method that executes the entirity of the game flow
@@ -29,57 +24,62 @@ namespace Wizard
         private void PlaySingleGame()
         {
             _frontend.DisplayStartGame();
-            List<Player> players = _frontend.PromptPlayerCreation();
+            _players = _frontend.PromptPlayerCreation();
 
-            _gameContext = new GameContext();
-            _gameContext.AddPlayers(players);
+            _gameContext = new GameContext(_players);
 
-            // ResetPlayerScores();
-            var curRoundBids = new Dictionary<Player, int>();
-            // setup deck and deal cards
-            _deck.Shuffle();
-            int rounds = _deck.Cards.Count / _players.Count;
-            for (int round = 1; round <= rounds; round++)
-            {
-                DealDeck(round);
-
-                // gameplay
+            int roundCount = _deck.Cards.Count / _players.Count;
+            for (int round = 1; round <= roundCount; round++)
                 PlaySingleRound(round);
-            }
         }
 
         private void PlaySingleRound(int roundNum)
         {
             _frontend.DisplayStartRound(roundNum);
-            var curRoundBids = new Dictionary<Player, int>();
-            var curRoundResults = new Dictionary<Player, int>();
-            CardSuite trumpSuite = _deck.Cards.Count > 0 ? _deck.PopTop().Suite : CardSuite.SPECIAL;
-            
+
+            _deck.Shuffle();
+            CardSuite trumpSuite = _deck.Cards.Count > 0
+                ? _deck.PopTop().Suite
+                : CardSuite.SPECIAL;
+
+            _gameContext.Rounds.Add(new RoundContext(roundNum, trumpSuite));
+            var curRound = _gameContext.CurRound;
+            curRound.Dealer = _gameContext.PrevRound == null
+                ? _players[0]
+                : _players[(_players.IndexOf(_gameContext.PrevRound.Dealer) + 1) % _players.Count];
+
             // bid on current round
-            _players.ForEach(player => curRoundBids[player] = player.MakeBid());
+            _players.ForEach(player => curRound.Bids[player] = player.MakeBid());
 
             // execute tricks and record results
             for (int trickNum = 1; trickNum <= roundNum; trickNum++)
             {
                 Player winner = PlaySingleTrick(trickNum);
-                curRoundResults[winner]++;
+                curRound.Results[winner]++;
             }
 
             // resolve round scores
             _players.ForEach(player =>
             {
-                int diff = Math.Abs(curRoundBids[player] - curRoundResults[player]);
+                int diff = Math.Abs(curRound.Bids[player] - curRound.Results[player]);
                 if (diff == 0)
-                    _playerScores[player] += (BASELINE_SCORE + curRoundBids[player] * HIT_SCORE);
+                    _gameContext.PlayerScores[player] += (BASELINE_SCORE + curRound.Bids[player] * HIT_SCORE);
                 else
-                    _playerScores[player] += (diff * MISS_SCORE);
+                    _gameContext.PlayerScores[player] += (diff * MISS_SCORE);
             });
         }
 
         // executes a single trick and returns the player that won the trick
-        private Player PlaySingleTrick(int trickNum, CardSuite trumpSuite)
+        private Player PlaySingleTrick(int trickNum)
         {
             _frontend.DisplayStartTrick(trickNum);
+            _gameContext.CurRound.Tricks.Add(new TrickContext(trickNum));
+
+            var curRound = _gameContext.CurRound;
+            var curTrick = curRound.CurTrick;
+
+
+
             return null;
         }
 
@@ -90,14 +90,10 @@ namespace Wizard
                     player.TakeCard(_deck.PopTop());
         }
 
-        private void ResetPlayerScores()
-        {
-            _players.ForEach(player => _playerScores[player] = 0);
-        }
 
         private List<Player> _players;
         private Deck _deck;
-        private Dictionary<Player, int> _playerScores;
+        //private Dictionary<Player, int> _playerScores;
         private IWizardFrontend _frontend { get; }
         private GameContext _gameContext;
 
