@@ -82,15 +82,52 @@ namespace Wizard
             Player leader = trickNum == 1
                 ? leader = curRound.Dealer
                 : leader = curRound.PrevTrick.Winner;
+            int leaderIndex = _players.IndexOf(leader);
 
-            List<Player> trickPlayerOrder = null; // TODO elegant way to wrap around _player list in play oder starting w/ dealer
+            // create a player list that starts at the trick leader and wraps around
+            List<Player> trickPlayerOrder = _players
+                .GetRange(leaderIndex, _players.Count - leaderIndex)
+                .Concat(_players.GetRange(0, leaderIndex)).ToList();
 
             trickPlayerOrder.ForEach(player =>
             {
-                curTrick.CardsPlayed.Add(player.MakeTurn(_gameContext));
+                var cardPlayed = player.MakeTurn(_gameContext);
+                curTrick.CardsPlayed.Add(cardPlayed);
+                _frontend.DisplayTurnTaken(cardPlayed, player);
             });
 
-            // set winner
+            // find winner and save it to trick context
+            var winningCard = CalcWinningCard(curTrick.CardsPlayed, curRound.TrumpSuite, curTrick.LeadingSuite);
+            var winningPlayer = _players[curTrick.CardsPlayed.IndexOf(winningCard)];
+            curTrick.Winner = winningPlayer;
+        }
+
+        private Card CalcWinningCard(List<Card> cardsPlayed, CardSuite trumpSuite, CardSuite leadingSuite)
+        {
+            Card winningCard = null;
+            foreach(var card in cardsPlayed)
+            {
+                if(winningCard == null)
+                {
+                    winningCard = card;
+                }
+                else if(card.Value == CardValue.WIZARD)
+                {
+
+                }
+                else if(card.Suite == trumpSuite)
+                {
+
+                }
+                else if(card.Suite == leadingSuite)
+                {
+
+                }
+                else
+                {
+
+                }
+            }
         }
 
         private void DealDeck(int roundNum)

@@ -11,6 +11,7 @@ namespace Wizard
         void DisplayStartGame();
         void DisplayStartRound(int roundNum);
         void DisplayStartTrick(int trickNum);
+        void DisplayTurnTaken(Card cardPlayed, Player player);
         Card PromptPlayerCardSelection(Player player);
         int PromptPlayerBid(Player player);
         List<Player> PromptPlayerCreation();

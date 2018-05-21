@@ -23,6 +23,11 @@ namespace Wizard
             Console.WriteLine($"Starting Trick {trickNum}\n");
         }
 
+        public void DisplayTurnTaken(Card cardPlayed, Player player)
+        {
+            Console.WriteLine($"{player.Name} played {cardPlayed.ToString()}");
+        }
+
         public int PromptPlayerBid(Player player)
         {
             Console.Write("enter bid: ");
