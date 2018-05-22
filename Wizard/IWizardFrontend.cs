@@ -14,6 +14,7 @@ namespace Wizard
         void DisplayTurnTaken(Card cardPlayed, Player player);
         void DisplayDealDone(Player dealer, Card trumpCard);
         void DisplayTrickWinner(Player winner, Card winningCard);
+        void DisplayRoundScores(GameContext gameContext);
         Card PromptPlayerCardSelection(Player player);
         int PromptPlayerBid(Player player);
         List<Player> PromptPlayerCreation();

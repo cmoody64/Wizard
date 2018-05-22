@@ -65,7 +65,7 @@ namespace Wizard
                 }
                 else
                 {
-                    Console.WriteLine($"please enter a valid number greater than 0 and less than {player.Hand.Count+1}");
+                    Console.WriteLine($"please enter a valid number greater than or equal to 0 and less than {player.Hand.Count+1}");
                 }
             }
             return bid;
@@ -111,6 +111,15 @@ namespace Wizard
             }
 
             return players;
+        }
+
+        public void DisplayRoundScores(GameContext gameContext)
+        {
+            var curRound = gameContext.CurRound;
+            foreach(var player in curRound.Bids.Keys)
+            {
+                Console.WriteLine($"{player.Name} bid {curRound.Bids[player]} and won {curRound.Results[player]} --- new score is {gameContext.PlayerScores[player]}");
+            }
         }
     }
 }

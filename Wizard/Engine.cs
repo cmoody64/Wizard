@@ -75,6 +75,8 @@ namespace Wizard
                 else
                     _gameContext.PlayerScores[player] += (diff * MISS_SCORE);
             });
+
+            _frontend.DisplayRoundScores(_gameContext);
         }
 
         // executes a single trick and stores state in a new TrickContext instance, as well
