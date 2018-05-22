@@ -64,9 +64,10 @@ namespace Wizard
         {
             get
             {
-                return CardsPlayed.Count > 0
-                    ? CardsPlayed[0].Suite
-                    : throw new IndexOutOfRangeException("LeadingSuite cannot be accessed because a leading card has not yet been played");
+                if (CardsPlayed.Count > 0)
+                    return CardsPlayed[0].Suite;
+                else
+                    throw new IndexOutOfRangeException("LeadingSuite cannot be accessed because a leading card has not yet been played");
             }
         }
         public Player Winner;

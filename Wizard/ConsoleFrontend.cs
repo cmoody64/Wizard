@@ -28,21 +28,38 @@ namespace Wizard
             Console.WriteLine($"{player.Name} played {cardPlayed.ToString()}");
         }
 
+        public void DisplayDealDone(Player dealer, Card trumpCard)
+        {
+            if (trumpCard != null)
+            {
+                Console.WriteLine($"{dealer.Name} dealt - {trumpCard.ToString()} is flipped");
+            }
+            else
+            {
+                Console.WriteLine("{dealer.Name} dealt - no trump suite set");
+            }
+        }
+
         public int PromptPlayerBid(Player player)
         {
-            Console.Write("enter bid: ");
+            Console.WriteLine($"\n{player.Name}'s hand:");
+            foreach(var card in player.Hand)
+            {
+                Console.WriteLine($"\t{card.ToString()}");
+            }
+            Console.Write($"{player.Name}, enter bid: ");
             int bid = -1;
             while (bid < 0)
             {
                 var strInput = Console.ReadLine();
                 var numInput = 0;
-                if (Int32.TryParse(strInput, out numInput) && numInput >= 0 && numInput < player.Hand.Count)
+                if (Int32.TryParse(strInput, out numInput) && numInput >= 0 && numInput <= player.Hand.Count)
                 {
                     bid = numInput;
                 }
                 else
                 {
-                    Console.WriteLine($"please enter a valid number greater than 0");
+                    Console.WriteLine($"please enter a valid number greater than 0 and less than {player.Hand.Count+1}");
                 }
             }
             return bid;

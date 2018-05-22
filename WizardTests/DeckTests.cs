@@ -17,7 +17,7 @@ namespace Wizard.Tests
         public void DeckTest()
         {
             var deck = new Deck();
-            Assert.Equals(deck.Cards.Count, WIZARD_DECK_COUNT);
+            Assert.AreEqual(deck.Cards.Count, WIZARD_DECK_COUNT);
 
             // use a set to test that each card is unique in the standard deck
             var standardDeckSet = new HashSet<Card>();
@@ -43,8 +43,8 @@ namespace Wizard.Tests
                 }
             }
 
-            Assert.Equals(jesterCount, 4);
-            Assert.Equals(wizardCount, 4);
+            Assert.AreEqual(jesterCount, 4);
+            Assert.AreEqual(wizardCount, 4);
         }
     }
 }

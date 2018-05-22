@@ -37,16 +37,20 @@ namespace Wizard
         {
             _frontend.DisplayStartRound(roundNum);
 
+            // shuffle, deal, and initialize round context
             _deck.Shuffle();
-            CardSuite trumpSuite = _deck.Cards.Count > 0
-                ? _deck.PopTop().Suite
-                : CardSuite.SPECIAL;
+            DealDeck(roundNum);
+            Card trumpCard = _deck.Cards.Count > 0 ? _deck.PopTop() : null;
+            CardSuite trumpSuite = trumpCard != null ? trumpCard.Suite : CardSuite.SPECIAL;
 
             _gameContext.Rounds.Add(new RoundContext(roundNum, trumpSuite));
             var curRound = _gameContext.CurRound;
             curRound.Dealer = roundNum == 1
                 ? _players[0]
                 : _players[(_players.IndexOf(_gameContext.PrevRound.Dealer) + 1) % _players.Count];
+            _players.ForEach(player => curRound.Results[player] = 0);
+
+            _frontend.DisplayDealDone(curRound.Dealer, trumpCard);
 
             // bid on current round
             _players.ForEach(player => curRound.Bids[player] = player.MakeBid());
@@ -56,7 +60,10 @@ namespace Wizard
             {
                 PlaySingleTrick(trickNum);
                 Player winner = curRound.CurTrick.Winner;
-                curRound.Results[winner]++;
+                if (curRound.Results.ContainsKey(winner))
+                    curRound.Results[winner]++;
+                else
+                    curRound.Results[winner] = 1;
             }
 
             // resolve round scores
@@ -97,37 +104,9 @@ namespace Wizard
             });
 
             // find winner and save it to trick context
-            var winningCard = CalcWinningCard(curTrick.CardsPlayed, curRound.TrumpSuite, curTrick.LeadingSuite);
+            var winningCard = CardComparator.CalcWinningCard(curTrick.CardsPlayed, curRound.TrumpSuite, curTrick.LeadingSuite);
             var winningPlayer = _players[curTrick.CardsPlayed.IndexOf(winningCard)];
             curTrick.Winner = winningPlayer;
-        }
-
-        private Card CalcWinningCard(List<Card> cardsPlayed, CardSuite trumpSuite, CardSuite leadingSuite)
-        {
-            Card winningCard = null;
-            foreach(var card in cardsPlayed)
-            {
-                if(winningCard == null)
-                {
-                    winningCard = card;
-                }
-                else if(card.Value == CardValue.WIZARD)
-                {
-
-                }
-                else if(card.Suite == trumpSuite)
-                {
-
-                }
-                else if(card.Suite == leadingSuite)
-                {
-
-                }
-                else
-                {
-
-                }
-            }
         }
 
         private void DealDeck(int roundNum)
