@@ -15,17 +15,23 @@ namespace Wizard
 
         public void DisplayStartRound(int roundNum)
         {
-            Console.WriteLine($"Starting Round {roundNum}\n");
+            Console.WriteLine("***********************");
+            Console.WriteLine($"\n\nStarting Round {roundNum}\n");
         }
 
         public void DisplayStartTrick(int trickNum)
         {
-            Console.WriteLine($"Starting Trick {trickNum}\n");
+            Console.WriteLine($"\n\nStarting Trick {trickNum}");
         }
 
         public void DisplayTurnTaken(Card cardPlayed, Player player)
         {
             Console.WriteLine($"{player.Name} played {cardPlayed.ToString()}");
+        }
+
+        public void DisplayTrickWinner(Player winner, Card winningCard)
+        {
+            Console.WriteLine($"\n{winner.Name} won with {winningCard.ToString()}");
         }
 
         public void DisplayDealDone(Player dealer, Card trumpCard)
@@ -67,10 +73,10 @@ namespace Wizard
 
         public Card PromptPlayerCardSelection(Player player)
         {
-            Console.WriteLine($"Current Hand: ");
-            foreach(var card in player.Hand)
+            Console.WriteLine($"\n{player.Name}'s turn: current hand: ");
+            for(int i = 0; i < player.Hand.Count; i++)
             {
-                Console.WriteLine($"\t(0) {card.ToString()}");
+                Console.WriteLine($"\t({i}) {player.Hand[i].ToString()}");
             }
             Console.Write("enter number of card selection: ");
             int selection = -1;

@@ -87,7 +87,7 @@ namespace Wizard
             var curTrick = curRound.CurTrick;
 
             Player leader = trickNum == 1
-                ? leader = curRound.Dealer
+                ? leader = _players[(_players.IndexOf(curRound.Dealer)+1) % _players.Count]
                 : leader = curRound.PrevTrick.Winner;
             int leaderIndex = _players.IndexOf(leader);
 
@@ -105,8 +105,9 @@ namespace Wizard
 
             // find winner and save it to trick context
             var winningCard = CardComparator.CalcWinningCard(curTrick.CardsPlayed, curRound.TrumpSuite, curTrick.LeadingSuite);
-            var winningPlayer = _players[curTrick.CardsPlayed.IndexOf(winningCard)];
+            var winningPlayer = trickPlayerOrder[curTrick.CardsPlayed.IndexOf(winningCard)];
             curTrick.Winner = winningPlayer;
+            _frontend.DisplayTrickWinner(winningPlayer, winningCard);            
         }
 
         private void DealDeck(int roundNum)
