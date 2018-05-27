@@ -53,7 +53,9 @@ namespace Wizard
             _frontend.DisplayDealDone(curRound.Dealer, trumpCard);
 
             // bid on current round
-            _players.ForEach(player => curRound.Bids[player] = player.MakeBid());
+            _players.ForEach(player => curRound.Bids[player] = player.MakeBid(curRound));
+            int totalBids = curRound.Bids.Aggregate(0, (accumulator, bidPair) => accumulator + bidPair.Value);
+            _frontend.DisplayBidOutcome(roundNum, totalBids);
 
             // execute tricks and record results
             for (int trickNum = 1; trickNum <= roundNum; trickNum++)

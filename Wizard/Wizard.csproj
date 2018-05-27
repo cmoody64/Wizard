@@ -43,6 +43,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AIPlayer.cs" />
     <Compile Include="Card.cs" />
     <Compile Include="CardComparator.cs" />
     <Compile Include="ConsoleFrontend.cs" />

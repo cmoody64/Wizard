@@ -121,5 +121,17 @@ namespace Wizard
                 Console.WriteLine($"{player.Name} bid {curRound.Bids[player]} and won {curRound.Results[player]} --- new score is {gameContext.PlayerScores[player]}");
             }
         }
+
+        public void DisplayBidOutcome(int roundNum, int totalBids)
+        {
+            string bidOutcome = null;
+            if (totalBids > roundNum)
+                bidOutcome = "overbid";
+            else if (totalBids == roundNum)
+                bidOutcome = "matched bid";
+            else
+                bidOutcome = "underbid";
+            Console.WriteLine($"\n{totalBids} bid on {roundNum} card{(roundNum != 1 ? "s" : "")}: {bidOutcome}");
+        }
     }
 }

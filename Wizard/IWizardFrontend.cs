@@ -15,6 +15,7 @@ namespace Wizard
         void DisplayDealDone(Player dealer, Card trumpCard);
         void DisplayTrickWinner(Player winner, Card winningCard);
         void DisplayRoundScores(GameContext gameContext);
+        void DisplayBidOutcome(int roundNum, int totalBids);
         Card PromptPlayerCardSelection(Player player);
         int PromptPlayerBid(Player player);
         List<Player> PromptPlayerCreation();

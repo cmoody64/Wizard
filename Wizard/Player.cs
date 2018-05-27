@@ -16,7 +16,7 @@ namespace Wizard
         }
         
         public abstract Card MakeTurn(GameContext gameContext);
-        public abstract int MakeBid();
+        public abstract int MakeBid(RoundContext roundContext);
 
         public void TakeCard(Card card)
         {
