@@ -24,7 +24,7 @@ namespace Wizard.Tests
             }.ToList();
             var leadingSuite = cardsPlayed[0].Suite;
             Card expectedWinner = cardsPlayed[1];
-            Card winner = CardComparator.CalcWinningCard(cardsPlayed, trumpSuite, leadingSuite);
+            Card winner = CardUtils.CalcWinningCard(cardsPlayed, trumpSuite, leadingSuite);
             Assert.AreEqual(winner, expectedWinner);
         }
 
@@ -42,7 +42,7 @@ namespace Wizard.Tests
             }.ToList();
             var leadingSuite = cardsPlayed[0].Suite;
             Card expectedWinner = cardsPlayed[2];
-            Card winner = CardComparator.CalcWinningCard(cardsPlayed, trumpSuite, leadingSuite);
+            Card winner = CardUtils.CalcWinningCard(cardsPlayed, trumpSuite, leadingSuite);
             Assert.AreEqual(winner, expectedWinner);
         }
 
@@ -60,7 +60,7 @@ namespace Wizard.Tests
             }.ToList();
             var leadingSuite = cardsPlayed[0].Suite;
             Card expectedWinner = cardsPlayed[2];
-            Card winner = CardComparator.CalcWinningCard(cardsPlayed, trumpSuite, leadingSuite);
+            Card winner = CardUtils.CalcWinningCard(cardsPlayed, trumpSuite, leadingSuite);
             Assert.AreEqual(winner, expectedWinner);
         }
 
@@ -78,7 +78,7 @@ namespace Wizard.Tests
             }.ToList();
             var leadingSuite = cardsPlayed[0].Suite;
             Card expectedWinner = cardsPlayed[1];
-            Card winner = CardComparator.CalcWinningCard(cardsPlayed, trumpSuite, leadingSuite);
+            Card winner = CardUtils.CalcWinningCard(cardsPlayed, trumpSuite, leadingSuite);
             Assert.AreEqual(winner, expectedWinner);
         }
 
@@ -96,7 +96,7 @@ namespace Wizard.Tests
             }.ToList();
             var leadingSuite = cardsPlayed[0].Suite;
             Card expectedWinner = cardsPlayed[1];
-            Card winner = CardComparator.CalcWinningCard(cardsPlayed, trumpSuite, leadingSuite);
+            Card winner = CardUtils.CalcWinningCard(cardsPlayed, trumpSuite, leadingSuite);
             Assert.AreEqual(winner, expectedWinner);
         }
     }

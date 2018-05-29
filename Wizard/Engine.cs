@@ -11,7 +11,6 @@ namespace Wizard
         public Engine()
         {
             _frontend = new ConsoleFrontend();
-            _deck = new Deck();
         }
 
         // blocking method that executes the entirity of the game flow
@@ -23,12 +22,13 @@ namespace Wizard
 
         private void PlaySingleGame()
         {
+            _curDeck = new Deck();
             _frontend.DisplayStartGame();
             _players = _frontend.PromptPlayerCreation();
 
             _gameContext = new GameContext(_players);
 
-            int roundCount = _deck.Cards.Count / _players.Count;
+            int roundCount = _curDeck.Cards.Count / _players.Count;
             for (int round = 1; round <= roundCount; round++)
                 PlaySingleRound(round);
         }
@@ -38,9 +38,9 @@ namespace Wizard
             _frontend.DisplayStartRound(roundNum);
 
             // shuffle, deal, and initialize round context
-            _deck.Shuffle();
+            _curDeck.Shuffle();
             DealDeck(roundNum);
-            Card trumpCard = _deck.Cards.Count > 0 ? _deck.PopTop() : null;
+            Card trumpCard = _curDeck.Cards.Count > 0 ? _curDeck.PopTop() : null;
             CardSuite trumpSuite = trumpCard != null ? trumpCard.Suite : CardSuite.SPECIAL;
 
             _gameContext.Rounds.Add(new RoundContext(roundNum, trumpSuite));
@@ -108,7 +108,7 @@ namespace Wizard
             });
 
             // find winner and save it to trick context
-            var winningCard = CardComparator.CalcWinningCard(curTrick.CardsPlayed, curRound.TrumpSuite, curTrick.LeadingSuite);
+            var winningCard = CardUtils.CalcWinningCard(curTrick.CardsPlayed, curRound.TrumpSuite, curTrick.LeadingSuite);
             var winningPlayer = trickPlayerOrder[curTrick.CardsPlayed.IndexOf(winningCard)];
             curTrick.Winner = winningPlayer;
             _frontend.DisplayTrickWinner(winningPlayer, winningCard);            
@@ -118,12 +118,12 @@ namespace Wizard
         {
             for(int i = 0; i < roundNum; i++)
                 foreach (var player in _players)
-                    player.TakeCard(_deck.PopTop());
+                    player.TakeCard(_curDeck.PopTop());
         }
 
 
         private List<Player> _players;
-        private Deck _deck;
+        private Deck _curDeck;
         //private Dictionary<Player, int> _playerScores;
         private IWizardFrontend _frontend { get; }
         private GameContext _gameContext;

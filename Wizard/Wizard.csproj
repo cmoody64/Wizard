@@ -45,7 +45,7 @@
   <ItemGroup>
     <Compile Include="AIPlayer.cs" />
     <Compile Include="Card.cs" />
-    <Compile Include="CardComparator.cs" />
+    <Compile Include="CardUtils.cs" />
     <Compile Include="ConsoleFrontend.cs" />
     <Compile Include="Deck.cs" />
     <Compile Include="Engine.cs" />

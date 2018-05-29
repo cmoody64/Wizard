@@ -11,12 +11,14 @@ namespace Wizard
         // state that persists across the scope of a single game
         public GameContext(List<Player> players)
         {
+            PlayerCount = players.Count;
             Rounds = new List<RoundContext>();
             PlayerScores = new Dictionary<Player, int>();
 
             // initialize player scores based off of the current player list passed in by the engine
             players.ForEach(player => PlayerScores[player] = 0);
         }
+        public int PlayerCount { get; }
         public List<RoundContext> Rounds { get; }
         public Dictionary<Player, int> PlayerScores { get; }
         public RoundContext CurRound { get { return Rounds.Last(); } }
