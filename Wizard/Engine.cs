@@ -39,6 +39,7 @@ namespace Wizard
 
             // shuffle, deal, and initialize round context
             _curDeck.Shuffle();
+            _frontend.DisplayDealInProgess(3/*message duration seconds*/);
             DealDeck(roundNum);
             Card trumpCard = _curDeck.Cards.Count > 0 ? _curDeck.PopTop() : null;
             CardSuite trumpSuite = trumpCard != null ? trumpCard.Suite : CardSuite.SPECIAL;

@@ -21,17 +21,17 @@ namespace Wizard
             if (roundContext.RoundNum < 2)
             {
                 trumpCutoff = CardValue.TWO;
-                nonTrumpCutoff = CardValue.FOUR;
+                nonTrumpCutoff = CardValue.THREE;
             }
             else if (roundContext.RoundNum < 5)
             {
-                trumpCutoff = CardValue.FOUR;
-                nonTrumpCutoff = CardValue.EIGHT;
+                trumpCutoff = CardValue.THREE;
+                nonTrumpCutoff = CardValue.SIX;
             }
             else
             {
-                trumpCutoff = CardValue.SEVEN;
-                nonTrumpCutoff = CardValue.JACK;
+                trumpCutoff = CardValue.FIVE;
+                nonTrumpCutoff = CardValue.TEN;
             }
 
             int bid = 0;
@@ -45,6 +45,7 @@ namespace Wizard
                     bid++;                    
             }
             _curBid = bid;
+            _frontend.DisplayPlayerBid(bid, this);
             return bid;
         }
 
@@ -76,9 +77,10 @@ namespace Wizard
                     var cardsPlayed = new List<Card>(curTrick.CardsPlayed);
                     cardsPlayed.Add(card);
 
-                    // each remaining player plays a random card from a randomly generated hand
+                    // each remaining player plays a random card from a randomly generated hand                  
                     for(int j = cardsPlayed.Count(); j < gameContext.PlayerCount; j++)
                     {
+                        // rand hand selected from the remaining cards specific to this simulation
                         var randHand = takeRandomCardsFromList(curSimRemainingCards, _hand.Count());
                         var playableCardsFromRandHand = CardUtils.GetPlayableCards(randHand, curTrick.LeadingSuite);
                         cardsPlayed.Add(playableCardsFromRandHand[_rand.Next() % playableCardsFromRandHand.Count()]);
@@ -92,14 +94,47 @@ namespace Wizard
                 }
             }
 
-            Dictionary<Card, double> winPercentageByCard = new Dictionary<Card, double>();
-            foreach(var cardWinPair in winsByCard)
+            List<KeyValuePair<Card, double>> cardsSortedByWinPctg = winsByCard.Aggregate(new List<KeyValuePair<Card, double>>(), (acc, nextPair) =>
             {
-                winPercentageByCard[cardWinPair.Key] = cardWinPair.Value * 1.0 / SIMULATION_COUNT;
+                double winPercentage = nextPair.Value * 1.0 / SIMULATION_COUNT;
+                acc.Add(new KeyValuePair<Card, double>(nextPair.Key, winPercentage));
+                return acc;
+            });
+            // sort it so that weakest cards are at lower indices and stronger card at higher indices                       
+            cardsSortedByWinPctg.Sort((a, b) => a.Value < b.Value ? -1 : 1);
+
+            var curBid = curRound.Bids[this];
+            var curWins = curRound.Results[this];
+            var roundsLeft = curRound.RoundNum - curRound.Tricks.Count + 1;
+            /*
+                requieredStrengthOfPlay is a value determining strength of card to play based on game context
+                given that requiredStrengthOfPlay = k:
+
+                k>1  => impossible to win, play strongest card
+                k=1 => play strongest cards from here on out to win
+                0<k<1 => sort cards by strength and select closest index to k val
+	                i.e. k = .6 and 5 cards => choose card 3 /5 ranked by strength
+                k=0 => play weakest cards from here on out to win
+                k<0 => won too many, impossible to win, play weakest card
+
+            */
+            double requiredStrengthOfPlay = (curBid - curWins) * 1.0 / roundsLeft;
+
+            Card cardToPlay = null;
+            if (requiredStrengthOfPlay >= 1)
+                cardToPlay = cardsSortedByWinPctg.Last().Key;
+            else if (requiredStrengthOfPlay <= 0)
+                cardToPlay = cardsSortedByWinPctg.First().Key;
+            else
+            {
+                // requiredStrengthOfPlay between 0 and 1
+                int indexToPlay = (int)(requiredStrengthOfPlay * cardsSortedByWinPctg.Count());
+                cardToPlay = cardsSortedByWinPctg[indexToPlay].Key;
             }
 
-            return null;
-
+            _frontend.DisplayTurnInProgress(this);
+            _hand.Remove(cardToPlay);
+            return cardToPlay;
         }
 
         private List<Card> takeRandomCardsFromList(List<Card> cardList, int numberToTake)

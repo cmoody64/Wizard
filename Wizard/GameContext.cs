@@ -62,14 +62,14 @@ namespace Wizard
         }
         public int TrickNum { get; }
         public List<Card> CardsPlayed { get; }
-        public CardSuite LeadingSuite
+        public CardSuite? LeadingSuite
         {
             get
             {
                 if (CardsPlayed.Count > 0)
                     return CardsPlayed[0].Suite;
                 else
-                    throw new IndexOutOfRangeException("LeadingSuite cannot be accessed because a leading card has not yet been played");
+                    return null;
             }
         }
         public Player Winner;
