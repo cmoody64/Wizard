@@ -62,6 +62,7 @@ namespace Wizard
                 acc.AddRange(trick.CardsPlayed);
                 return acc;
             })).ToList();
+            allKnownCards.Add(curRound.TrumpCard);
 
             List<Card> remainingCards = new List<Card>(new Deck().Cards);
             foreach (var card in allKnownCards)

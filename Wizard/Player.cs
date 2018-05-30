@@ -30,7 +30,7 @@ namespace Wizard
 
         protected IWizardFrontend _frontend;
         protected List<Card> _hand;
-        public IReadOnlyList<Card> Hand { get { return _hand; } }
+        public IReadOnlyList<Card> Hand => _hand;
         public string Name { get; }
     }
 }

@@ -42,9 +42,8 @@ namespace Wizard
             _frontend.DisplayDealInProgess(3/*message duration seconds*/);
             DealDeck(roundNum);
             Card trumpCard = _curDeck.Cards.Count > 0 ? _curDeck.PopTop() : null;
-            CardSuite trumpSuite = trumpCard != null ? trumpCard.Suite : CardSuite.SPECIAL;
 
-            _gameContext.Rounds.Add(new RoundContext(roundNum, trumpSuite));
+            _gameContext.Rounds.Add(new RoundContext(roundNum, trumpCard));
             var curRound = _gameContext.CurRound;
             curRound.Dealer = roundNum == 1
                 ? _players[0]

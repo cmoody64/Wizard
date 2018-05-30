@@ -31,7 +31,7 @@ namespace Wizard
             }
         }
 
-        public IReadOnlyList<Card> Cards { get { return _cards; } }
+        public IReadOnlyList<Card> Cards => _cards;
         private List<Card> _cards;
 
         public Card PopTop()

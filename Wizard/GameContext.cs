@@ -21,20 +21,17 @@ namespace Wizard
         public int PlayerCount { get; }
         public List<RoundContext> Rounds { get; }
         public Dictionary<Player, int> PlayerScores { get; }
-        public RoundContext CurRound { get { return Rounds.Last(); } }
-        public RoundContext PrevRound
-        {
-            get { return Rounds.Count > 1 ? Rounds[Rounds.Count - 2] : null; }
-        }
+        public RoundContext CurRound => Rounds.Last();
+        public RoundContext PrevRound => Rounds.Count > 1 ? Rounds[Rounds.Count - 2] : null;
     }
 
     // state that persists across a single round
     public class RoundContext
     {
-        public RoundContext(int roundNum, CardSuite trumpSuite)
+        public RoundContext(int roundNum, Card trumpCard)
         {
             RoundNum = roundNum;
-            TrumpSuite = trumpSuite;
+            TrumpCard = trumpCard;
             Tricks = new List<TrickContext>();
             Bids = new Dictionary<Player, int>();
             Results = new Dictionary<Player, int>();
@@ -43,13 +40,11 @@ namespace Wizard
         public List<TrickContext> Tricks { get; }
         public Dictionary<Player, int> Bids { get; }
         public Dictionary<Player, int> Results { get; }
-        public CardSuite TrumpSuite { get; }
+        public CardSuite TrumpSuite => TrumpCard?.Suite ?? CardSuite.SPECIAL;
         public Player Dealer { get; set; }
-        public TrickContext CurTrick { get { return Tricks.Last(); } }
-        public TrickContext PrevTrick
-        {
-            get { return Tricks.Count > 1 ? Tricks[Tricks.Count - 2] : null; }
-        }
+        public Card TrumpCard { get; set; }
+        public TrickContext CurTrick => Tricks.Last();
+        public TrickContext PrevTrick => Tricks.Count > 1 ? Tricks[Tricks.Count - 2] : null;
     }
 
     // state that persists across a single trick
@@ -62,16 +57,7 @@ namespace Wizard
         }
         public int TrickNum { get; }
         public List<Card> CardsPlayed { get; }
-        public CardSuite? LeadingSuite
-        {
-            get
-            {
-                if (CardsPlayed.Count > 0)
-                    return CardsPlayed[0].Suite;
-                else
-                    return null;
-            }
-        }
+        public CardSuite? LeadingSuite => CardsPlayed.Count > 0 ? CardsPlayed[0].Suite : (CardSuite?)null;
         public Player Winner;
     }
 }
