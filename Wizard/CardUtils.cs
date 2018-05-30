@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace Wizard
 {
-    public static class CardComparator
+    public static class CardUtils
     {
-        public static Card CalcWinningCard(List<Card> cardsPlayed, CardSuite trumpSuite, CardSuite leadingSuite)
+        public static Card CalcWinningCard(List<Card> cardsPlayed, CardSuite trumpSuite, CardSuite? leadingSuite)
         {
             Card winningCard = null;
             foreach (var curCard in cardsPlayed)
@@ -17,6 +17,10 @@ namespace Wizard
                 {
                     winningCard = curCard;
                     break;
+                }
+                else if(curCard.Value == CardValue.JESTER)
+                {
+                    continue;
                 }
 
                 if (winningCard == null)
@@ -45,6 +49,14 @@ namespace Wizard
                 }
             }
             return winningCard;
+        }
+
+        public static List<Card> GetPlayableCards(List<Card> hand, CardSuite? leadingSuite)
+        {
+            var leadingSuiteCards = hand.Where(card => card.Suite == leadingSuite);
+            return leadingSuiteCards.Count() > 0
+                ? leadingSuiteCards.Concat(hand.Where(card => card.Suite == CardSuite.SPECIAL)).ToList()
+                : hand;
         }
     }
 }

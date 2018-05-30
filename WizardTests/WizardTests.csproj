@@ -51,6 +51,7 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="AIPlayerTests.cs" />
     <Compile Include="CardComparatorTests.cs" />
     <Compile Include="DeckTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
