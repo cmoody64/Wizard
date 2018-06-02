@@ -50,12 +50,16 @@ namespace Wizard
     // state that persists across a single trick
     public class TrickContext
     {
+        public TrickContext()
+        {
+            CardsPlayed = new List<Card>();
+        }
         public TrickContext(int trickNum)
         {
             TrickNum = trickNum;
             CardsPlayed = new List<Card>();
         }
-        public int TrickNum { get; }
+        public int TrickNum { get; set; }
         public List<Card> CardsPlayed { get; }
         public CardSuite? LeadingSuite => CardsPlayed.Count > 0 ? CardsPlayed[0].Suite : (CardSuite?)null;
         public Player Winner;

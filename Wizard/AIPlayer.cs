@@ -14,8 +14,19 @@ namespace Wizard
             _rand = new Random();
         }
 
-        public override int MakeBid(RoundContext roundContext)
+        public override int MakeBid(GameContext gameContext)
         {
+            var emptyTrick = new TrickContext(1 /*trick num*/);
+            var hiddenCards = Deck.GetDeckComplement(_hand);
+            var trumpSuite = gameContext.CurRound.TrumpSuite;
+            var playerCount = gameContext.PlayerCount;
+
+            // first rank cards by win percentages on an empty trick (card from _hand is leading card)
+            Dictionary<Card, double> handWinAverages = SimulateTrick(emptyTrick, hiddenCards, trumpSuite, playerCount);
+
+            // then decide on a round strategy which determines winpctg thresholds for 
+            var roundStrategy = AIPlayStrategy.AGGRESIVE;
+
             CardValue trumpCutoff;
             CardValue nonTrumpCutoff;
             if (roundContext.RoundNum < 2)
@@ -55,8 +66,8 @@ namespace Wizard
             var curTrick = curRound.CurTrick;
             var curRoundTricks = curRound.Tricks;
 
-            var playableCards = CardUtils.GetPlayableCards(_hand, curTrick.LeadingSuite);
-            
+            //var playableCards = CardUtils.GetPlayableCards(_hand, curTrick.LeadingSuite);
+
             List<Card> allKnownCards = _hand.Concat(curRoundTricks.Aggregate(new List<Card>(), (acc, trick) =>
             {
                 acc.AddRange(trick.CardsPlayed);
@@ -64,43 +75,11 @@ namespace Wizard
             })).ToList();
             allKnownCards.Add(curRound.TrumpCard);
 
-            List<Card> remainingCards = new List<Card>(new Deck().Cards);
-            foreach (var card in allKnownCards)
-                remainingCards.Remove(card);
+            List<Card> remainingCards = Deck.GetDeckComplement(allKnownCards);
 
-            Dictionary<Card, int> winsByCard = playableCards.Aggregate(new Dictionary<Card, int>(), (acc, next) =>{ acc[next] = 0; return acc; });
-
-            for (int i = 0; i < SIMULATION_COUNT; i++)
-            {
-                foreach (var card in playableCards)
-                {
-                    var curSimRemainingCards = new List<Card>(remainingCards);
-                    var cardsPlayed = new List<Card>(curTrick.CardsPlayed);
-                    cardsPlayed.Add(card);
-
-                    // each remaining player plays a random card from a randomly generated hand                  
-                    for(int j = cardsPlayed.Count(); j < gameContext.PlayerCount; j++)
-                    {
-                        // rand hand selected from the remaining cards specific to this simulation
-                        var randHand = takeRandomCardsFromList(curSimRemainingCards, _hand.Count());
-                        var playableCardsFromRandHand = CardUtils.GetPlayableCards(randHand, curTrick.LeadingSuite);
-                        cardsPlayed.Add(playableCardsFromRandHand[_rand.Next() % playableCardsFromRandHand.Count()]);
-                    }
-                    var winningCard = CardUtils.CalcWinningCard(cardsPlayed, curRound.TrumpSuite, curTrick.LeadingSuite);
-
-                    if (card.Equals(winningCard))
-                    {
-                        winsByCard[card]++;
-                    }
-                }
-            }
-
-            List<KeyValuePair<Card, double>> cardsSortedByWinPctg = winsByCard.Aggregate(new List<KeyValuePair<Card, double>>(), (acc, nextPair) =>
-            {
-                double winPercentage = nextPair.Value * 1.0 / SIMULATION_COUNT;
-                acc.Add(new KeyValuePair<Card, double>(nextPair.Key, winPercentage));
-                return acc;
-            });
+            // simulate trick and save the win percentages (strenth) of each car in _hand
+            Dictionary<Card, Double> winPercentagesByCard = SimulateTrick(curTrick, remainingCards, curRound.TrumpSuite, gameContext.PlayerCount);
+            List<KeyValuePair<Card, double>> cardsSortedByWinPctg = winPercentagesByCard.ToList();
             // sort it so that weakest cards are at lower indices and stronger card at higher indices                       
             cardsSortedByWinPctg.Sort((a, b) => a.Value < b.Value ? -1 : 1);
 
@@ -138,6 +117,48 @@ namespace Wizard
             return cardToPlay;
         }
 
+        // simulates playing each card in _hand against a list of already played cards
+        // returns a dictionary of cards in _hand to win percentages
+        // @param hiddenCards refers to the cards in the deck that could potentialy be played by other players
+        private Dictionary<Card, double> SimulateTrick(TrickContext trick, List<Card> hiddenCards, CardSuite trumpSuite, int playerCount)
+        {
+            var playableCards = CardUtils.GetPlayableCards(_hand, trick.LeadingSuite);
+            Dictionary<Card, int> winsByCard = playableCards.Aggregate(new Dictionary<Card, int>(), (acc, next) => { acc[next] = 0; return acc; });
+
+            for (int i = 0; i < SIMULATION_COUNT; i++)
+            {
+                foreach (var card in playableCards)
+                {
+                    var curSimRemainingCards = new List<Card>(hiddenCards);
+                    var simPlayedCards = new List<Card>(trick.CardsPlayed);
+                    simPlayedCards.Add(card);
+
+                    // each remaining player plays a random card from a randomly generated hand                  
+                    for (int j = simPlayedCards.Count(); j < playerCount; j++)
+                    {
+                        // rand hand selected from the remaining cards specific to this simulation
+                        var randHand = takeRandomCardsFromList(curSimRemainingCards, _hand.Count());
+                        var playableCardsFromRandHand = CardUtils.GetPlayableCards(randHand, trick.LeadingSuite);
+                        simPlayedCards.Add(playableCardsFromRandHand[_rand.Next() % playableCardsFromRandHand.Count()]);
+                    }
+                    var winningCard = CardUtils.CalcWinningCard(simPlayedCards, trumpSuite, trick.LeadingSuite);
+
+                    if (card.Equals(winningCard))
+                    {
+                        winsByCard[card]++;
+                    }
+                }
+            }
+
+            Dictionary<Card, double> winPercentagesByCard = new Dictionary<Card, double>();
+            foreach(var winCardPair in winsByCard)
+            {
+                double winPctg = winCardPair.Value * 1.0 / SIMULATION_COUNT;
+                winPercentagesByCard[winCardPair.Key] = winPctg;
+            }
+            return winPercentagesByCard;
+        }
+
         private List<Card> takeRandomCardsFromList(List<Card> cardList, int numberToTake)
         {
             List<Card> removedCards = new List<Card>();
@@ -154,5 +175,12 @@ namespace Wizard
         private int _curBid;
         private readonly int SIMULATION_COUNT = 1000;
         private Random _rand;
+
+        enum AIPlayStrategy
+        {
+            CONSERVATIVE,
+            MODERATE,
+            AGGRESIVE
+        }
     }
 }

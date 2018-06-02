@@ -58,5 +58,14 @@ namespace Wizard
         }
 
         private readonly int NUM_SPECIAL_CARDS = 4;
+
+        // receives a list of cards and returns all cards missing from the given list to make a complete deck
+        public static List<Card> GetDeckComplement(List<Card> cards)
+        {
+            List<Card> deckComplement = new List<Card>(new Deck().Cards);
+            foreach (var card in cards)
+                deckComplement.Remove(card);
+            return deckComplement;
+        }
     }
 }

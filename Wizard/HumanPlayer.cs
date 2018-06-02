@@ -12,7 +12,7 @@ namespace Wizard
         {                
         }
 
-        public override int MakeBid(RoundContext roundContext)
+        public override int MakeBid(GameContext gameContext)
         {
             return _frontend.PromptPlayerBid(this);
         }

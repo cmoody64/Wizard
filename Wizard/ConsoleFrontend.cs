@@ -105,10 +105,12 @@ namespace Wizard
             {
                 string curName = Console.ReadLine();
                 if (curName.Length > 0)
+                {
                     if (curName.ToLower().EndsWith("bot"))
                         players.Add(new AIPlayer(this, curName));
                     else
                         players.Add(new HumanPlayer(this, curName));
+                }
                 else
                     break;
             }
