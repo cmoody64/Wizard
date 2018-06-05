@@ -36,9 +36,13 @@ namespace Wizard.Tests
                 humanPlayer1,
                 humanPlayer2
             };
+
             var testGameContext = new GameContext(testPlayers);
 
-            var curRound = new RoundContext(roundNum, CardSuite.DIAMONDS);
+            var trumpCard = new Card(CardValue.EIGHT, CardSuite.DIAMONDS);
+            var curRound = new RoundContext(roundNum, trumpCard);
+            testPlayers.ForEach(player => curRound.Bids[player] = 0);
+            testPlayers.ForEach(player => curRound.Results[player] = 0);
             var trick1 = new TrickContext(1);
             trick1.CardsPlayed.Add(new Card(CardValue.JACK, CardSuite.CLUBS));
 
@@ -46,6 +50,40 @@ namespace Wizard.Tests
             testGameContext.Rounds.Add(curRound);
 
             aiPlayer.MakeTurn(testGameContext);
+        }
+
+        [TestMethod()]
+        public void MakeBidTest()
+        {
+            var testFrontend = new ConsoleFrontend();
+
+            var roundNum = 3;
+            var deck = new Deck();
+            deck.Shuffle();
+
+            var aiPlayer = new AIPlayer(testFrontend, "wizardAI");
+            var humanPlayer1 = new HumanPlayer(testFrontend, "Connor");
+            var humanPlayer2 = new HumanPlayer(testFrontend, "Diana");
+            for (int i = 0; i < roundNum; i++)
+            {
+                aiPlayer.TakeCard(deck.PopTop());
+                humanPlayer1.TakeCard(deck.PopTop());
+                humanPlayer2.TakeCard(deck.PopTop());
+            }
+
+            var testPlayers = new List<Player>
+            {
+                aiPlayer,
+                humanPlayer1,
+                humanPlayer2
+            };
+            var testGameContext = new GameContext(testPlayers);
+
+            var trumpCard = new Card(CardValue.EIGHT, CardSuite.DIAMONDS);
+            var curRound = new RoundContext(roundNum, trumpCard);
+            testGameContext.Rounds.Add(curRound);
+
+            aiPlayer.MakeBid(testGameContext);
         }
     }
 }
